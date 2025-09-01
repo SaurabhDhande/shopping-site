@@ -1,10 +1,9 @@
 # Docker
-# Build a Docker image
+# Build Docker images with Azure Pipelines
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
 - main
-
 
 resources:
 - repo: self
@@ -14,23 +13,27 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build image
+  displayName: Build images
   jobs:
   - job: Build
     displayName: Build
     pool:
-      vmImage: ubuntu-latest
+      name: 'Azure Pipelines'   # Your agent pool
+      demands:
+        - Agent.Name -equals Hosted Agent  # Ensures it uses the correct agent
     steps:
     - task: Docker@2
-      displayName: Build cart
+      displayName: Build cart service
       inputs:
         command: build
         dockerfile: '$(Build.SourcesDirectory)/cart-service/Dockerfile'
         tags: |
           $(tag)
-    - task: Docker@2
-      displayName:  Build Homepage service
-      inputs:
-         command: 'build'
-         Dockerfile: '$(Build.SourcesDirectory)/homepage-service/Dockerfile'
 
+    - task: Docker@2
+      displayName: Build homepage service
+      inputs:
+        command: build
+        dockerfile: '$(Build.SourcesDirectory)/homepage-service/Dockerfile'
+        tags: |
+          $(tag)
