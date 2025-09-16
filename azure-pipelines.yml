@@ -1,7 +1,3 @@
-# Docker
-# Build Docker images with Azure Pipelines
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - main
 
@@ -9,31 +5,60 @@ resources:
 - repo: self
 
 variables:
+  dockerHubRepo: saurabhdhande6@gmail.com  # 👈 change this to your Docker Hub username
   tag: '$(Build.BuildId)'
 
 stages:
-- stage: Build
-  displayName: Build images
+- stage: BuildAndPush
+  displayName: Build and Push images
   jobs:
-  - job: Build
-    displayName: Build
+  - job: Docker
+    displayName: Build and Push
     pool:
-      name: 'Azure Pipelines'   # Your agent pool
-      demands:
-        - Agent.Name -equals Hosted Agent  # Ensures it uses the correct agent
+      vmImage: 'ubuntu-latest'
     steps:
     - task: Docker@2
-      displayName: Build cart service
+      displayName: Login to Docker Hub
+      inputs:
+        command: login
+        containerRegistry: DockerHub   # 👈 service connection name
+
+    # ---------------- Cart Service ----------------
+    - task: Docker@2
+      displayName: Build cart-service image
       inputs:
         command: build
+        repository: $(dockerHubRepo)/cart-service
         dockerfile: '$(Build.SourcesDirectory)/cart-service/Dockerfile'
         tags: |
+          latest
           $(tag)
 
     - task: Docker@2
-      displayName: Build homepage service
+      displayName: Push cart-service image
+      inputs:
+        command: push
+        repository: $(dockerHubRepo)/cart-service
+        tags: |
+          latest
+          $(tag)
+
+    # ---------------- Homepage Service ----------------
+    - task: Docker@2
+      displayName: Build homepage-service image
       inputs:
         command: build
+        repository: $(dockerHubRepo)/homepage-service
         dockerfile: '$(Build.SourcesDirectory)/homepage-service/Dockerfile'
         tags: |
+          latest
+          $(tag)
+
+    - task: Docker@2
+      displayName: Push homepage-service image
+      inputs:
+        command: push
+        repository: $(dockerHubRepo)/homepage-service
+        tags: |
+          latest
           $(tag)
