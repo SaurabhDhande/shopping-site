@@ -54,3 +54,9 @@ stages:
         command: push
         repository: $(dockerHubRepo)/homepage-service
         tags: '$(Build.BuildId)'
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Kubernetes manifests
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/k8s'
+        ArtifactName: 'k8s-manifests'
+        publishLocation: 'Container'
