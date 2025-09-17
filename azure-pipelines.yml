@@ -30,18 +30,14 @@ stages:
         command: build
         repository: $(dockerHubRepo)/cart-service
         dockerfile: '$(Build.SourcesDirectory)/cart-service/Dockerfile'
-        tags: |
-          latest
-          $(tag)
+        tags: '$(Build.BuildId)'
 
     - task: Docker@2
       displayName: Push cart-service image
       inputs:
         command: push
         repository: $(dockerHubRepo)/cart-service
-        tags: |
-          latest
-          $(tag)
+        tags: '$(Build.BuildId)'
 
     # ---------------- Homepage Service ----------------
     - task: Docker@2
@@ -50,15 +46,11 @@ stages:
         command: build
         repository: $(dockerHubRepo)/homepage-service
         dockerfile: '$(Build.SourcesDirectory)/homepage-service/Dockerfile'
-        tags: |
-          latest
-          $(tag)
+        tags: '$(Build.BuildId)'
 
     - task: Docker@2
       displayName: Push homepage-service image
       inputs:
         command: push
         repository: $(dockerHubRepo)/homepage-service
-        tags: |
-          latest
-          $(tag)
+        tags: '$(Build.BuildId)'
