@@ -5,7 +5,7 @@ resources:
 - repo: self
 
 variables:
-  dockerHubRepo: saurabhdhande  # 👈 change this to your Docker Hub username
+  #dockerHubRepo: saurabhdhande  # 👈 change this to your Docker Hub username
   tag: '$(Build.BuildId)'
 
 stages:
