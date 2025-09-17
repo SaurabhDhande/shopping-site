@@ -21,7 +21,7 @@ stages:
       displayName: Login to Docker Hub
       inputs:
         command: login
-        containerRegistry: DockerHub   # 👈 service connection name
+        containerRegistry: hub   # 👈 service connection name
 
     # ---------------- Cart Service ----------------
     - task: Docker@2
